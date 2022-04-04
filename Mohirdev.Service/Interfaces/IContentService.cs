@@ -15,8 +15,7 @@ namespace Mohirdev.Service.Interfaces
     public interface IContentService
     {
         Task<BaseResponse<Content>> CreateAsync(CreateContentDto ContentDto);
-        Task<BaseResponse<Content>> GetAsync(Expression<Func<Content, bool>> expression);
-        Task<BaseResponse<IEnumerable<Content>>> GetAllAsync(PaginationParams @params, Expression<Func<Content, bool>> expression = null);
+        Task<BaseResponse<IEnumerable<Content>>> GetAllAsync(PaginationParams @params, long studentId = 0);
         Task<BaseResponse<bool>> DeleteAsync(Expression<Func<Content, bool>> expression);
         Task<BaseResponse<Content>> UpdateAsync(long id, CreateContentDto ContentDto);
 

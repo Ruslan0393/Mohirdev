@@ -12,9 +12,7 @@ using Mohirdev.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Mohirdev.Service.Serivces
@@ -88,30 +86,23 @@ namespace Mohirdev.Service.Serivces
             return response;
         }
 
-        public async Task<BaseResponse<IEnumerable<Content>>> GetAllAsync(PaginationParams @params, Expression<Func<Content, bool>> expression = null)
-        {
+      
 
+        public async Task<BaseResponse<IEnumerable<Content>>> GetAllAsync(PaginationParams @params, long studentId = 0)
+        {
             var response = new BaseResponse<IEnumerable<Content>>();
 
-            var Contents = await unitOfWork.Content.GetAllAsync(expression);
-
-            response.Data = Contents.ToPagedList(@params);
-
-            return response;
-        }
-
-        public async Task<BaseResponse<Content>> GetAsync(Expression<Func<Content, bool>> expression)
-        {
-            var response = new BaseResponse<Content>();
-
-            var Content = await unitOfWork.Content.GetAsync(expression);
-            if (Content is null)
+            var student = await unitOfWork.StudentCourses.GetAsync(p => p.UserId == studentId);
+            
+            if(student is null)
             {
-                response.Error = new ErrorModel(404, "Content not found");
+                response.Error = new ErrorModel(400, "Student not found");
                 return response;
             }
 
-            response.Data = Content;
+            var Contents = await unitOfWork.Content.GetAllAsync(p => p.CourseId == student.CourseId && p.State != State.Deleted);
+
+            response.Data = Contents.ToPagedList(@params);
 
             return response;
         }

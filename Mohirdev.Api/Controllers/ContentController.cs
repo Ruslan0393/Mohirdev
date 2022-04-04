@@ -33,17 +33,9 @@ namespace Mohirdev.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<BaseResponse<IEnumerable<Content>>>> GetAll([FromQuery] PaginationParams @params)
+        public async Task<ActionResult<BaseResponse<IEnumerable<Content>>>> GetAll([FromQuery] PaginationParams @params, long studentId)
         {
-            var result = await ContentService.GetAllAsync(@params, p => p.State != State.Deleted);
-
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<BaseResponse<Content>>> Get([FromRoute] long id)
-        {
-            var result = await ContentService.GetAsync(p => p.Id == id && p.State != State.Deleted);
+            var result = await ContentService.GetAllAsync(@params, studentId);
 
             return StatusCode(result.Code ?? result.Error.Code.Value, result);
         }
