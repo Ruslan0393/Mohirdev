@@ -17,7 +17,6 @@ namespace Mohirdev.Service.DTOs
         [Required]
         public string LastName { get; set; }
         [Required]
-        [RegularExpression(@"^998[389][012345789][0-9]{7}$", ErrorMessage = "Phone number is not valid")]
         public string PhoneNumber { get; set; }
         [Required]
         public string Password { get; set; }

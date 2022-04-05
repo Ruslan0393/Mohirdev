@@ -26,7 +26,7 @@ namespace Mohirdev.Domain.Entities
         [ForeignKey("UserId")]
         public User User { get; set; }
 
-        public virtual ICollection<Category> Categories { get; }
+        /*public virtual ICollection<Category> Categories { get; }*/
 
         /// <summary>
         /// One to many reletionship with Course and Content

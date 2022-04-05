@@ -37,13 +37,13 @@ namespace Mohirdev.Service.Serivces
         {
             var response = new BaseResponse<Content>();
 
-            var resaltUser = await unitOfWork.Course.GetAsync(p => p.Id == ContentDto.CourseId);
-            if (resaltUser is null)
+            var resalt = await unitOfWork.Course.GetAsync(p => p.Id == ContentDto.CourseId);
+            if (resalt is null)
             {
                 response.Error = new ErrorModel(404, "This is course not exist");
                 return response;
             }
-            if (resaltUser.State == State.Deleted)
+            if (resalt.State == State.Deleted)
             {
                 response.Error = new ErrorModel(404, "Course not found");
                 return response;
@@ -55,8 +55,10 @@ namespace Mohirdev.Service.Serivces
 
             mappedContent.VideoUrl = await SaveFileAsync(ContentDto.Video.OpenReadStream(), ContentDto.Video.FileName);
             var result = await unitOfWork.Content.CreateAsync(mappedContent);
+
             string hostUrl = HttpContextHelper.Context?.Request?.Scheme + "://" + HttpContextHelper.Context?.Request?.Host.Value;
-            string webUrl = $@"{hostUrl}/{config.GetSection("File:Organization").Value}";
+            string webUrl = $@"{hostUrl}/{config.GetSection("Storage:VideoUrl/").Value}";
+
             result.VideoUrl = webUrl + result.VideoUrl;
 
             await unitOfWork.SaveChangesAsync();

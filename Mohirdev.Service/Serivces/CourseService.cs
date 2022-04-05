@@ -37,20 +37,20 @@ namespace Mohirdev.Service.Serivces
         {
             var response = new BaseResponse<Course>();
 
-            var resaltUser = await unitOfWork.User.GetAsync(p => p.Id == CourseDto.UserId);
-            if (resaltUser is null)
+            var resaltCourse = await unitOfWork.User.GetAsync(p => p.Id == CourseDto.UserId);
+            if (resaltCourse is null)
             {
                 response.Error = new ErrorModel(404, "User must entered");
                 return response;
             }
 
-            if (resaltUser.State == State.Deleted)
+            if (resaltCourse.State == State.Deleted)
             {
                 response.Error = new ErrorModel(404, "User not found");
                 return response;
             }
 
-            if (resaltUser.Role == Role.Student)
+            if (resaltCourse.Role == Role.Student)
             {
                 response.Error = new ErrorModel(402, "Student can't upload course");
                 return response;
@@ -65,12 +65,12 @@ namespace Mohirdev.Service.Serivces
 
             var mappedCourse = mapper.Map<Course>(CourseDto);
 
-            mappedCourse.Categories.Add(cate);
+      
             mappedCourse.ImageName = await SaveFileAsync(CourseDto.Image.OpenReadStream(), CourseDto.Image.FileName);
             var result = await unitOfWork.Course.CreateAsync(mappedCourse);
 
             string hostUrl = HttpContextHelper.Context?.Request?.Scheme + "://" + HttpContextHelper.Context?.Request?.Host.Value;
-            string webUrl = $@"{hostUrl}/{config.GetSection("File:Organization").Value}";
+            string webUrl = $@"{hostUrl}/{config.GetSection("Storage:ImageUrl/").Value}";
 
             result.ImageName = webUrl + result.ImageName;
 
@@ -139,6 +139,7 @@ namespace Mohirdev.Service.Serivces
             FileStream mainFile = File.Create(filePath);
             await file.CopyToAsync(mainFile);
             mainFile.Close();
+
             return fileName;
         }
 
@@ -153,7 +154,6 @@ namespace Mohirdev.Service.Serivces
                 response.Error = new ErrorModel(404, "Course not found");
                 return response;
             }
-
 
             Course.Name = CourseDto.Name;
             Course.Description = CourseDto.Description;

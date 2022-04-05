@@ -19,48 +19,6 @@ namespace Mohirdev.Data.Migrations
                 .HasAnnotation("ProductVersion", "5.0.15")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("CategoryCourse", b =>
-                {
-                    b.Property<long>("CategoriesId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("CoursesId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("CategoriesId", "CoursesId");
-
-                    b.HasIndex("CoursesId");
-
-                    b.ToTable("CategoryCourse");
-                });
-
-            modelBuilder.Entity("Mohirdev.Domain.Entities.Category", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DeleteAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<int>("State")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Category");
-                });
-
             modelBuilder.Entity("Mohirdev.Domain.Entities.Content", b =>
                 {
                     b.Property<long>("Id")
@@ -239,21 +197,6 @@ namespace Mohirdev.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("CategoryCourse", b =>
-                {
-                    b.HasOne("Mohirdev.Domain.Entities.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Mohirdev.Domain.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CoursesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Mohirdev.Domain.Entities.Content", b =>

@@ -53,7 +53,7 @@ namespace Mohirdev.Service.Serivces
             var result = await unitOfWork.User.CreateAsync(mappedUser);
 
             string hostUrl = HttpContextHelper.Context?.Request?.Scheme + "://" + HttpContextHelper.Context?.Request?.Host.Value;
-            string webUrl = $@"{hostUrl}/{config.GetSection("File:Organization").Value}";
+            string webUrl = $@"{hostUrl}/{config.GetSection("Storage:ImageUrl/").Value}";
 
             result.ImageName = webUrl + result.ImageName;
 

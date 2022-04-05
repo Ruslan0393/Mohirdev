@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mohirdev.Data.Migrations
 {
     [DbContext(typeof(MohirdevDbContext))]
-    [Migration("20220404121812_first22")]
-    partial class first22
+    [Migration("20220405032648_firstMigration")]
+    partial class firstMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,48 +20,6 @@ namespace Mohirdev.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.15")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-            modelBuilder.Entity("CategoryCourse", b =>
-                {
-                    b.Property<long>("CategoriesId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("CoursesId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("CategoriesId", "CoursesId");
-
-                    b.HasIndex("CoursesId");
-
-                    b.ToTable("CategoryCourse");
-                });
-
-            modelBuilder.Entity("Mohirdev.Domain.Entities.Category", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DeleteAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("ModifyAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<int>("State")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Category");
-                });
 
             modelBuilder.Entity("Mohirdev.Domain.Entities.Content", b =>
                 {
@@ -241,21 +199,6 @@ namespace Mohirdev.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("CategoryCourse", b =>
-                {
-                    b.HasOne("Mohirdev.Domain.Entities.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Mohirdev.Domain.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CoursesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Mohirdev.Domain.Entities.Content", b =>
