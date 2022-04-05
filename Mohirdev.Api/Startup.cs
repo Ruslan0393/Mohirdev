@@ -34,6 +34,7 @@ namespace Mohirdev.Api
             });
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddHttpContextAccessor();
+
             services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 
@@ -41,11 +42,13 @@ namespace Mohirdev.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Mohirdev.Api", Version = "v1" });
             });
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IContentService, ContentService>();
-            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ICategoryService, CategoryService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -63,6 +66,8 @@ namespace Mohirdev.Api
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseStaticFiles();
 
             app.UseAuthorization();
 

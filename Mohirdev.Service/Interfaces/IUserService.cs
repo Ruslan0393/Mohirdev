@@ -5,9 +5,7 @@ using Mohirdev.Service.DTOs;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Mohirdev.Service.Interfaces
@@ -19,6 +17,7 @@ namespace Mohirdev.Service.Interfaces
         Task<BaseResponse<IEnumerable<User>>> GetAllAsync(PaginationParams @params, Expression<Func<User, bool>> expression = null);
         Task<BaseResponse<bool>> DeleteAsync(Expression<Func<User, bool>> expression);
         Task<BaseResponse<User>> UpdateAsync(long id, CreateUserDto UserDto);
+        Task<BaseResponse<User>> UpdateBalanceAsync(long id, decimal summa);
         Task<BaseResponse<User>> LoginAsync(string email, string password);
 
         Task<string> SaveFileAsync(Stream file, string fileName);

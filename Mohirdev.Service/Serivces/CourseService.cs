@@ -8,13 +8,12 @@ using Mohirdev.Domain.Entities;
 using Mohirdev.Domain.Enums;
 using Mohirdev.Service.DTOs;
 using Mohirdev.Service.Extensions;
+using Mohirdev.Service.Helpers;
 using Mohirdev.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Mohirdev.Service.Serivces
@@ -38,14 +37,12 @@ namespace Mohirdev.Service.Serivces
         {
             var response = new BaseResponse<Course>();
 
-
             var resaltUser = await unitOfWork.User.GetAsync(p => p.Id == CourseDto.UserId);
-            if(resaltUser is null)
+            if (resaltUser is null)
             {
                 response.Error = new ErrorModel(404, "User must entered");
                 return response;
             }
-
 
             if (resaltUser.State == State.Deleted)
             {
@@ -53,21 +50,29 @@ namespace Mohirdev.Service.Serivces
                 return response;
             }
 
-            if(resaltUser.Role == Role.Student)
+            if (resaltUser.Role == Role.Student)
             {
                 response.Error = new ErrorModel(402, "Student can't upload course");
                 return response;
             }
-            
 
+            var cate = await unitOfWork.Category.GetAsync(p => p.Id == CourseDto.CategoryId);
+            if (cate is null)
+            {
+                response.Error = new ErrorModel(404, "Category not found");
+                return response;
+            }
 
             var mappedCourse = mapper.Map<Course>(CourseDto);
-            
-            
+
+            mappedCourse.Categories.Add(cate);
             mappedCourse.ImageName = await SaveFileAsync(CourseDto.Image.OpenReadStream(), CourseDto.Image.FileName);
             var result = await unitOfWork.Course.CreateAsync(mappedCourse);
 
-            result.ImageName = "https://localhost:5001/Images/" + result.ImageName;
+            string hostUrl = HttpContextHelper.Context?.Request?.Scheme + "://" + HttpContextHelper.Context?.Request?.Host.Value;
+            string webUrl = $@"{hostUrl}/{config.GetSection("File:Organization").Value}";
+
+            result.ImageName = webUrl + result.ImageName;
 
             await unitOfWork.SaveChangesAsync();
 
@@ -153,7 +158,7 @@ namespace Mohirdev.Service.Serivces
             Course.Name = CourseDto.Name;
             Course.Description = CourseDto.Description;
             Course.Price = CourseDto.Price;
-  
+
             Course.ImageName = await SaveFileAsync(CourseDto.Image.OpenReadStream(), CourseDto.Image.FileName);
             Course.Update();
 

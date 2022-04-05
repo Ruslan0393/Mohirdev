@@ -8,6 +8,7 @@ using Mohirdev.Domain.Entities;
 using Mohirdev.Domain.Enums;
 using Mohirdev.Service.DTOs.Content;
 using Mohirdev.Service.Extensions;
+using Mohirdev.Service.Helpers;
 using Mohirdev.Service.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -54,8 +55,9 @@ namespace Mohirdev.Service.Serivces
 
             mappedContent.VideoUrl = await SaveFileAsync(ContentDto.Video.OpenReadStream(), ContentDto.Video.FileName);
             var result = await unitOfWork.Content.CreateAsync(mappedContent);
-
-            result.VideoUrl = "https://localhost:5001/Videos/" + result.VideoUrl;
+            string hostUrl = HttpContextHelper.Context?.Request?.Scheme + "://" + HttpContextHelper.Context?.Request?.Host.Value;
+            string webUrl = $@"{hostUrl}/{config.GetSection("File:Organization").Value}";
+            result.VideoUrl = webUrl + result.VideoUrl;
 
             await unitOfWork.SaveChangesAsync();
 
@@ -86,15 +88,15 @@ namespace Mohirdev.Service.Serivces
             return response;
         }
 
-      
+
 
         public async Task<BaseResponse<IEnumerable<Content>>> GetAllAsync(PaginationParams @params, long studentId = 0)
         {
             var response = new BaseResponse<IEnumerable<Content>>();
 
             var student = await unitOfWork.StudentCourses.GetAsync(p => p.UserId == studentId);
-            
-            if(student is null)
+
+            if (student is null)
             {
                 response.Error = new ErrorModel(400, "Student not found");
                 return response;

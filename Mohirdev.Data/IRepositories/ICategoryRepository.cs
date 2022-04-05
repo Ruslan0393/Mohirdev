@@ -2,7 +2,7 @@
 
 namespace Mohirdev.Data.IRepositories
 {
-    public interface ICourseRepository : IGenericRepository<Course>
+    public interface ICategoryRepository : IGenericRepository<Category>
     {
     }
 }

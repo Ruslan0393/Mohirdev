@@ -1,25 +1,22 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Mohirdev.Domain.Commons;
 using Mohirdev.Domain.Configurations;
 using Mohirdev.Domain.Entities;
 using Mohirdev.Domain.Enums;
 using Mohirdev.Service.DTOs.Content;
 using Mohirdev.Service.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Mohirdev.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ContentController : ControllerBase
+    public class ContentsController : ControllerBase
     {
         private readonly IContentService ContentService;
 
-        public ContentController(IContentService ContentService)
+        public ContentsController(IContentService ContentService)
         {
             this.ContentService = ContentService;
         }
@@ -29,7 +26,7 @@ namespace Mohirdev.Api.Controllers
         {
             var result = await ContentService.CreateAsync(ContentDto);
 
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
 
         [HttpGet]
@@ -37,7 +34,7 @@ namespace Mohirdev.Api.Controllers
         {
             var result = await ContentService.GetAllAsync(@params, studentId);
 
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
 
         [HttpPut("{id}")]
@@ -45,7 +42,7 @@ namespace Mohirdev.Api.Controllers
         {
             var result = await ContentService.UpdateAsync(id, ContentDto);
 
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
 
         [HttpDelete("{id}")]
@@ -53,7 +50,7 @@ namespace Mohirdev.Api.Controllers
         {
             var result = await ContentService.DeleteAsync(p => p.Id == id && p.State != State.Deleted);
 
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
     }
 }

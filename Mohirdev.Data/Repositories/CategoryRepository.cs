@@ -4,9 +4,9 @@ using Mohirdev.Domain.Entities;
 
 namespace Mohirdev.Data.Repositories
 {
-    public class CourseRepository : GenericRepository<Course>, ICourseRepository
+    public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
     {
-        public CourseRepository(MohirdevDbContext dbContext) : base(dbContext)
+        public CategoryRepository(MohirdevDbContext dbContext) : base(dbContext)
         {
         }
     }

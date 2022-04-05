@@ -12,11 +12,11 @@ namespace Mohirdev.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IUserService userService;
 
-        public UserController(IUserService userService)
+        public UsersController(IUserService userService)
         {
             this.userService = userService;
         }
@@ -26,7 +26,7 @@ namespace Mohirdev.Api.Controllers
         {
             var result = await userService.CreateAsync(userDto);
 
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
 
         [HttpGet]
@@ -34,7 +34,7 @@ namespace Mohirdev.Api.Controllers
         {
             var result = await userService.GetAllAsync(@params, p => p.State != State.Deleted);
 
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
 
         [HttpGet("{id}")]
@@ -42,31 +42,43 @@ namespace Mohirdev.Api.Controllers
         {
             var result = await userService.GetAsync(p => p.Id == id && p.State != State.Deleted);
 
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
 
         [HttpGet]
         [Route("login")]
-        public async Task<ActionResult<BaseResponse<User>>> Login([FromQuery]string email, [FromQuery]string password)
+        public async Task<ActionResult<BaseResponse<User>>> Login([FromQuery] string email, [FromQuery] string password)
         {
             var result = await userService.LoginAsync(email, password);
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<BaseResponse<User>>> Update(long id, [FromForm]CreateUserDto userDto)
+        public async Task<ActionResult<BaseResponse<User>>> Update(long id, [FromForm] CreateUserDto userDto)
         {
             var result = await userService.UpdateAsync(id, userDto);
 
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
+
+        [HttpPut]
+        [Route("update-balance/{id}")]
+        public async Task<ActionResult<BaseResponse<User>>> UpdateBalance(long id, [FromQuery] decimal summa)
+        {
+            var result = await userService.UpdateBalanceAsync(id, summa);
+
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<BaseResponse<bool>>> Delete(long id)
         {
             var result = await userService.DeleteAsync(p => p.Id == id && p.State != State.Deleted);
 
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
+
+
     }
 }

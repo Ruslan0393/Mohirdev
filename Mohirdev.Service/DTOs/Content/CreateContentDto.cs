@@ -1,17 +1,19 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Mohirdev.Service.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace Mohirdev.Service.DTOs.Content
 {
     public class CreateContentDto
     {
+        [Required]
+        [MaxFileSize(153600)]
         public IFormFile Video { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
         public string ExtraInfo { get; set; }
+        [Required]
         public long CourseId { get; set; }
     }
 }

@@ -1,35 +1,32 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Mohirdev.Domain.Commons;
 using Mohirdev.Domain.Configurations;
 using Mohirdev.Domain.Entities;
 using Mohirdev.Domain.Enums;
 using Mohirdev.Service.DTOs;
 using Mohirdev.Service.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Mohirdev.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CourseController : ControllerBase
+    public class CoursesController : ControllerBase
     {
         private readonly ICourseService courseService;
 
-        public CourseController(ICourseService courseService)
+        public CoursesController(ICourseService courseService)
         {
             this.courseService = courseService;
         }
 
         [HttpPost]
-        public async Task<ActionResult<BaseResponse<Course>>> Create([FromForm]CreateCourseDto CourseDto)
+        public async Task<ActionResult<BaseResponse<Course>>> Create([FromForm] CreateCourseDto CourseDto)
         {
             var result = await courseService.CreateAsync(CourseDto);
-              
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
 
         [HttpGet]
@@ -37,7 +34,7 @@ namespace Mohirdev.Api.Controllers
         {
             var result = await courseService.GetAllAsync(@params, p => p.State != State.Deleted);
 
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
 
         [HttpGet("{id}")]
@@ -45,7 +42,7 @@ namespace Mohirdev.Api.Controllers
         {
             var result = await courseService.GetAsync(p => p.Id == id && p.State != State.Deleted);
 
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
 
         [HttpPut("{id}")]
@@ -53,7 +50,7 @@ namespace Mohirdev.Api.Controllers
         {
             var result = await courseService.UpdateAsync(id, CourseDto);
 
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
 
         [HttpDelete("{id}")]
@@ -61,7 +58,7 @@ namespace Mohirdev.Api.Controllers
         {
             var result = await courseService.DeleteAsync(p => p.Id == id && p.State != State.Deleted);
 
-            return StatusCode(result.Code ?? result.Error.Code.Value, result);
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }
     }
 }

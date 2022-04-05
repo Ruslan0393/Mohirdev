@@ -1,19 +1,20 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Mohirdev.Data.IRepositories;
-using Mohirdev.Domain.Commons;
+﻿using Microsoft.Extensions.Configuration;
 using Mohirdev.Domain.Configurations;
-using Mohirdev.Domain.Entities;
-using Mohirdev.Domain.Enums;
-using Mohirdev.Service.DTOs;
-using Mohirdev.Service.Extensions;
+using Microsoft.AspNetCore.Hosting;
 using Mohirdev.Service.Interfaces;
-using System;
+using Mohirdev.Data.IRepositories;
+using Mohirdev.Service.Extensions;
 using System.Collections.Generic;
-using System.IO;
+using Mohirdev.Service.Helpers;
+using Mohirdev.Domain.Entities;
 using System.Linq.Expressions;
+using Mohirdev.Domain.Commons;
 using System.Threading.Tasks;
+using Mohirdev.Service.DTOs;
+using Mohirdev.Domain.Enums;
+using AutoMapper;
+using System.IO;
+using System;
 
 namespace Mohirdev.Service.Serivces
 {
@@ -43,7 +44,6 @@ namespace Mohirdev.Service.Serivces
                 return response;
             }
 
-       
             // create after checking success
             var mappedUser = mapper.Map<User>(UserDto);
 
@@ -52,7 +52,10 @@ namespace Mohirdev.Service.Serivces
 
             var result = await unitOfWork.User.CreateAsync(mappedUser);
 
-            result.ImageName = "https://localhost:5001/Images/" + result.ImageName;
+            string hostUrl = HttpContextHelper.Context?.Request?.Scheme + "://" + HttpContextHelper.Context?.Request?.Host.Value;
+            string webUrl = $@"{hostUrl}/{config.GetSection("File:Organization").Value}";
+
+            result.ImageName = webUrl + result.ImageName;
 
             await unitOfWork.SaveChangesAsync();
 
@@ -114,7 +117,7 @@ namespace Mohirdev.Service.Serivces
         public async Task<BaseResponse<User>> LoginAsync(string email, string password)
         {
             var response = new BaseResponse<User>();
-             
+
             var User = await unitOfWork.User.GetAsync(p => p.Email == email && p.Password == password && p.State != State.Deleted);
             if (User is null)
             {
@@ -136,6 +139,7 @@ namespace Mohirdev.Service.Serivces
             FileStream mainFile = File.Create(filePath);
             await file.CopyToAsync(mainFile);
             mainFile.Close();
+
             return fileName;
         }
 
@@ -150,8 +154,6 @@ namespace Mohirdev.Service.Serivces
                 return response;
             }
 
-        
-
             User.FirstName = UserDto.FirstName;
             User.LastName = UserDto.LastName;
             User.PhoneNumber = UserDto.PhoneNumber;
@@ -159,6 +161,29 @@ namespace Mohirdev.Service.Serivces
             User.Password = UserDto.Password;
             User.Balance = UserDto.Balance;
             User.ImageName = await SaveFileAsync(UserDto.ImageName.OpenReadStream(), UserDto.ImageName.FileName);
+            User.Update();
+
+            var result = await unitOfWork.User.UpdateAsync(User);
+
+            await unitOfWork.SaveChangesAsync();
+
+            response.Data = result;
+
+            return response;
+        }
+
+        public async Task<BaseResponse<User>> UpdateBalanceAsync(long id, decimal summa)
+        {
+            var response = new BaseResponse<User>();
+
+            var User = await unitOfWork.User.GetAsync(p => p.Id == id && p.State != State.Deleted);
+            if (User is null)
+            {
+                response.Error = new ErrorModel(404, "User not found");
+                return response;
+            }
+
+            User.Balance += summa;
             User.Update();
 
             var result = await unitOfWork.User.UpdateAsync(User);

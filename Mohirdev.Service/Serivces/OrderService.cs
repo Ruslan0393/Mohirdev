@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Mohirdev.Data.IRepositories;
 using Mohirdev.Domain.Commons;
 using Mohirdev.Domain.Configurations;
@@ -34,21 +32,21 @@ namespace Mohirdev.Service.Serivces
 
             var res = await unitOfWork.Course.GetAsync(p => p.Id == OrderDto.CourseId);
             var user = await unitOfWork.User.GetAsync(p => p.Id == OrderDto.ClientId);
-            if(res is null)
+            if (res is null)
             {
                 response.Error = new ErrorModel(400, $"{res.Name} course not found");
                 return response;
             }
 
             var course = await unitOfWork.StudentCourses.GetAsync(p => p.UserId == OrderDto.ClientId && p.CourseId == OrderDto.CourseId);
-            
-            if(course is not null)
+
+            if (course is not null)
             {
                 response.Error = new ErrorModel(400, $"This course already bought");
                 return response;
             }
 
-            if(user.Balance <= res.Price)
+            if (user.Balance <= res.Price)
             {
                 response.Error = new ErrorModel(400, $"Your need {res.Price - user.Balance}$ for buy ");
                 return response;
@@ -122,6 +120,6 @@ namespace Mohirdev.Service.Serivces
             return response;
         }
 
-       
+
     }
 }

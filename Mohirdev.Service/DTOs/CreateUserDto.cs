@@ -1,22 +1,30 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Mohirdev.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Mohirdev.Service.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace Mohirdev.Service.DTOs
 {
     public class CreateUserDto
     {
+        [Required]
         public Role Role { get; set; }
+        [Required]
+        [MaxFileSize(2048)]
         public IFormFile ImageName { get; set; }
+        [Required]
         public string FirstName { get; set; }
+        [Required]
         public string LastName { get; set; }
+        [Required]
+        [RegularExpression(@"^998[389][012345789][0-9]{7}$", ErrorMessage = "Phone number is not valid")]
         public string PhoneNumber { get; set; }
+        [Required]
         public string Password { get; set; }
+        [Required]
+        [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", ErrorMessage = "Email is not valid")]
         public string Email { get; set; }
+        [Required]
         public decimal Balance { get; set; }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using Mohirdev.Data.Contexts;
 using Mohirdev.Data.IRepositories;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Mohirdev.Data.Repositories
@@ -15,6 +12,7 @@ namespace Mohirdev.Data.Repositories
         public IContentRepository Content { get; private set; }
         public IOrderRepository Order { get; private set; }
         public IStudentCourseRepository StudentCourses { get; private set; }
+        public ICategoryRepository Category { get; set; }
 
         private readonly MohirdevDbContext mohirdevDb;
 
@@ -27,6 +25,7 @@ namespace Mohirdev.Data.Repositories
             Content = new ContentRepository(mohirdevDb);
             Order = new OrderRepository(mohirdevDb);
             StudentCourses = new StudentCoursesRepository(mohirdevDb);
+            Category = new CategoryRepository(mohirdevDb);
         }
 
         public void Dispose()
