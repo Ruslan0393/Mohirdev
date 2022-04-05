@@ -74,7 +74,7 @@ namespace Mohirdev.Api.Controllers
 
         [HttpPut]
         [Route("update-image/{id}")]
-        public async Task<ActionResult<BaseResponse<User>>> UpdateImage(long id, [FromQuery]IFormFile newImage)
+        public async Task<ActionResult<BaseResponse<User>>> UpdateImage(long id, [FromQuery] IFormFile newImage)
         {
             var result = await userService.UpdateImageAsync(id, newImage);
 

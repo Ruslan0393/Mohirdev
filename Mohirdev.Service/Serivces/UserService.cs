@@ -97,7 +97,7 @@ namespace Mohirdev.Service.Serivces
             var Users = await unitOfWork.User.GetAllAsync(expression);
 
             // Check users for exist
-            if(Users is null)
+            if (Users is null)
             {
                 response.Error = new ErrorModel(404, "Users not found");
             }
@@ -173,7 +173,7 @@ namespace Mohirdev.Service.Serivces
             User.PhoneNumber = UserDto.PhoneNumber;
             User.Email = UserDto.Email;
             User.Password = UserDto.Password;
-            
+
             User.Update();
 
             var result = await unitOfWork.User.UpdateAsync(User);
