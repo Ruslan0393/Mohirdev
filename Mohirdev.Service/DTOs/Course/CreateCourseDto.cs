@@ -17,7 +17,6 @@ namespace Mohirdev.Service.DTOs
         public decimal Price { get; set; }
         [Required]
         public long UserId { get; set; }
-        [Required]
-        public long CategoryId { get; set; }
+
     }
 }

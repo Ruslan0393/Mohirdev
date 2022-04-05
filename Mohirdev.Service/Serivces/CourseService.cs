@@ -37,35 +37,29 @@ namespace Mohirdev.Service.Serivces
         {
             var response = new BaseResponse<Course>();
 
-            var resaltCourse = await unitOfWork.User.GetAsync(p => p.Id == CourseDto.UserId);
-            if (resaltCourse is null)
+            var resalt = await unitOfWork.User.GetAsync(p => p.Id == CourseDto.UserId);
+            // check for exist Course
+            if (resalt is null)
             {
                 response.Error = new ErrorModel(404, "User must entered");
                 return response;
             }
-
-            if (resaltCourse.State == State.Deleted)
+            // Check for state 
+            if (resalt.State == State.Deleted)
             {
                 response.Error = new ErrorModel(404, "User not found");
                 return response;
             }
-
-            if (resaltCourse.Role == Role.Student)
+            // Check for role
+            if (resalt.Role == Role.Student)
             {
                 response.Error = new ErrorModel(402, "Student can't upload course");
                 return response;
             }
 
-            var cate = await unitOfWork.Category.GetAsync(p => p.Id == CourseDto.CategoryId);
-            if (cate is null)
-            {
-                response.Error = new ErrorModel(404, "Category not found");
-                return response;
-            }
 
             var mappedCourse = mapper.Map<Course>(CourseDto);
 
-      
             mappedCourse.ImageName = await SaveFileAsync(CourseDto.Image.OpenReadStream(), CourseDto.Image.FileName);
             var result = await unitOfWork.Course.CreateAsync(mappedCourse);
 

@@ -31,6 +31,7 @@ namespace Mohirdev.Service.Serivces
             var response = new BaseResponse<Order>();
 
             var res = await unitOfWork.Course.GetAsync(p => p.Id == OrderDto.CourseId);
+            var courseUser = await unitOfWork.User.GetAsync(p => p.Id == res.UserId);
             var user = await unitOfWork.User.GetAsync(p => p.Id == OrderDto.ClientId);
             if (res is null)
             {
@@ -53,7 +54,7 @@ namespace Mohirdev.Service.Serivces
             }
 
             user.Balance = user.Balance - res.Price;
-            res.Price = user.Balance + res.Price;
+            courseUser.Balance = courseUser.Balance + res.Price;
 
             var mappedOrder = mapper.Map<Order>(OrderDto);
             var mappedStudentCourses = mapper.Map<StudentCourses>(new StudentCoursesDto { CourseId = res.Id, UserId = user.Id });
@@ -62,7 +63,6 @@ namespace Mohirdev.Service.Serivces
             await unitOfWork.Course.UpdateAsync(res);
             await unitOfWork.StudentCourses.CreateAsync(mappedStudentCourses);
             var result = await unitOfWork.Order.CreateAsync(mappedOrder);
-
 
             await unitOfWork.SaveChangesAsync();
 
@@ -109,6 +109,7 @@ namespace Mohirdev.Service.Serivces
             var response = new BaseResponse<Order>();
 
             var Order = await unitOfWork.Order.GetAsync(expression);
+
             if (Order is null)
             {
                 response.Error = new ErrorModel(404, "Order not found");

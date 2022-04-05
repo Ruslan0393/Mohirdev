@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Mohirdev.Domain.Commons;
 using Mohirdev.Domain.Configurations;
 using Mohirdev.Domain.Entities;
 using Mohirdev.Domain.Enums;
 using Mohirdev.Service.DTOs;
+using Mohirdev.Service.DTOs.User;
 using Mohirdev.Service.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -54,7 +56,7 @@ namespace Mohirdev.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<BaseResponse<User>>> Update(long id, [FromForm] CreateUserDto userDto)
+        public async Task<ActionResult<BaseResponse<User>>> Update(long id, [FromForm] UpdateUserDto userDto)
         {
             var result = await userService.UpdateAsync(id, userDto);
 
@@ -66,6 +68,15 @@ namespace Mohirdev.Api.Controllers
         public async Task<ActionResult<BaseResponse<User>>> UpdateBalance(long id, [FromQuery] decimal summa)
         {
             var result = await userService.UpdateBalanceAsync(id, summa);
+
+            return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
+        }
+
+        [HttpPut]
+        [Route("update-image/{id}")]
+        public async Task<ActionResult<BaseResponse<User>>> UpdateImage(long id, [FromQuery]IFormFile newImage)
+        {
+            var result = await userService.UpdateImageAsync(id, newImage);
 
             return StatusCode(result.Error is null ? result.Code : result.Error.Code, result);
         }

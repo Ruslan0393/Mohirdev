@@ -1,7 +1,9 @@
-﻿using Mohirdev.Domain.Commons;
+﻿using Microsoft.AspNetCore.Http;
+using Mohirdev.Domain.Commons;
 using Mohirdev.Domain.Configurations;
 using Mohirdev.Domain.Entities;
 using Mohirdev.Service.DTOs;
+using Mohirdev.Service.DTOs.User;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,8 +18,9 @@ namespace Mohirdev.Service.Interfaces
         Task<BaseResponse<User>> GetAsync(Expression<Func<User, bool>> expression);
         Task<BaseResponse<IEnumerable<User>>> GetAllAsync(PaginationParams @params, Expression<Func<User, bool>> expression = null);
         Task<BaseResponse<bool>> DeleteAsync(Expression<Func<User, bool>> expression);
-        Task<BaseResponse<User>> UpdateAsync(long id, CreateUserDto UserDto);
+        Task<BaseResponse<User>> UpdateAsync(long id, UpdateUserDto UserDto);
         Task<BaseResponse<User>> UpdateBalanceAsync(long id, decimal summa);
+        Task<BaseResponse<User>> UpdateImageAsync(long id, IFormFile newImage);
         Task<BaseResponse<User>> LoginAsync(string email, string password);
 
         Task<string> SaveFileAsync(Stream file, string fileName);
